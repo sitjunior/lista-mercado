@@ -114,7 +114,8 @@ export default function GroceryList() {
       const input = editInputRef.current
       if (input) {
         input.focus()
-        input.setSelectionRange(input.value.length, input.value.length)
+        input.selectionStart = input.value.length
+        input.selectionEnd = input.value.length
       }
     }, 0)
   }
@@ -129,7 +130,8 @@ export default function GroceryList() {
     }
   }
 
-  function handleTouchStart(item: Item) {
+  function handleTouchStart(e: React.TouchEvent, item: Item) {
+    e.preventDefault()
     longPressRef.current = setTimeout(() => startEditing(item), 500)
   }
 
@@ -272,7 +274,7 @@ export default function GroceryList() {
               <button
                 type="button"
                 onClick={() => handleClick(item)}
-                onTouchStart={() => handleTouchStart(item)}
+                onTouchStart={(e) => handleTouchStart(e, item)}
                 onTouchEnd={handleTouchEnd}
                 onTouchMove={handleTouchEnd}
                 className="flex-1 text-left text-base text-zinc-800 dark:text-zinc-100"
@@ -350,7 +352,7 @@ export default function GroceryList() {
                   <button
                     type="button"
                     onClick={() => handleClick(item)}
-                    onTouchStart={() => handleTouchStart(item)}
+                    onTouchStart={(e) => handleTouchStart(e, item)}
                     onTouchEnd={handleTouchEnd}
                     onTouchMove={handleTouchEnd}
                     className="flex-1 text-left text-base text-zinc-400 line-through dark:text-zinc-500"

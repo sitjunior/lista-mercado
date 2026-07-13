@@ -62,6 +62,7 @@ jobs:
             source .env
             set +a
             export HOSTNAME=127.0.0.1
+            export PORT=3002
             pm2 delete lista-mercado 2>/dev/null || true
-            pm2 start server.js --name lista-mercado
+            pm2 start server.js --name lista-mercado -- --port=3002
             pm2 save

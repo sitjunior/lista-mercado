@@ -12,44 +12,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        env:
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
-          MYSQL_USER: ${{ secrets.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-        run: npm run build
-
-      - name: Prepare standalone output
-        run: |
-          mkdir -p .next/standalone/.next/static
-          cp -r .next/static/. .next/standalone/.next/static/
-          if [ -d public ]; then
-            cp -r public .next/standalone/public
-          fi
-
-      - name: Deploy via rsync
+      - name: Deploy source via rsync
         uses: burnett01/rsync-deployments@8.0.0
         with:
-          switches: -azr --delete --exclude='.env'
-          path: .next/standalone/
-          remote_path: /var/www/html/lista-mercado/
+          switches: >-
+            -azr --delete
+            --exclude='.git*'
+            --exclude='node_modules/'
+            --exclude='.env'
+            --exclude='.DS_Store'
+          path: ./
+          remote_path: /var/www/html/lista-mercado/source/
           remote_host: ${{ secrets.HOST }}
           remote_user: ${{ secrets.USERNAME }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Restart app on server
+      - name: Build & restart on server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.HOST }}
@@ -57,6 +35,24 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
+            cd /var/www/html/lista-mercado/source
+
+            set -a
+            source .env
+            set +a
+
+            npm ci
+
+            npm run build
+
+            mkdir -p .next/standalone/.next/static
+            cp -r .next/static/. .next/standalone/.next/static/
+            if [ -d public ]; then
+              cp -r public .next/standalone/public
+            fi
+
+            rsync -a --delete .next/standalone/ /var/www/html/lista-mercado/
+
             cd /var/www/html/lista-mercado
             set -a
             source .env

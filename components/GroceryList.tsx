@@ -19,6 +19,7 @@ export default function GroceryList() {
   const [dark, setDark] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)
+  const lastClickRef = useRef<{ id: number; time: number } | null>(null)
 
   function api(path: string, init?: RequestInit) {
     const t = window.location.pathname.split('/').filter(Boolean)[0] || ''
@@ -108,7 +109,23 @@ export default function GroceryList() {
   function startEditing(item: Item) {
     setEditingId(item.id)
     setEditName(item.name)
-    setTimeout(() => editInputRef.current?.select(), 0)
+    setTimeout(() => {
+      const input = editInputRef.current
+      if (input) {
+        input.focus()
+        input.setSelectionRange(input.value.length, input.value.length)
+      }
+    }, 0)
+  }
+
+  function handleClick(item: Item) {
+    const now = Date.now()
+    if (lastClickRef.current && lastClickRef.current.id === item.id && now - lastClickRef.current.time < 400) {
+      startEditing(item)
+      lastClickRef.current = null
+    } else {
+      lastClickRef.current = { id: item.id, time: now }
+    }
   }
 
   function toggleSelect(id: number) {
@@ -241,7 +258,8 @@ export default function GroceryList() {
               />
             ) : (
               <button
-                onClick={() => startEditing(item)}
+                type="button"
+                onClick={() => handleClick(item)}
                 className="flex-1 text-left text-base text-zinc-800 dark:text-zinc-100"
               >
                 {item.name}
@@ -315,7 +333,8 @@ export default function GroceryList() {
                   />
                 ) : (
                   <button
-                    onClick={() => startEditing(item)}
+                    type="button"
+                    onClick={() => handleClick(item)}
                     className="flex-1 text-left text-base text-zinc-400 line-through dark:text-zinc-500"
                   >
                     {item.name}

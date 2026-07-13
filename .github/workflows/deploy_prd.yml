@@ -1,0 +1,67 @@
+name: deploy-prd
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+        run: npm run build
+
+      - name: Prepare standalone output
+        run: |
+          mkdir -p .next/standalone/.next/static
+          cp -r .next/static/. .next/standalone/.next/static/
+          if [ -d public ]; then
+            cp -r public .next/standalone/public
+          fi
+
+      - name: Deploy via rsync
+        uses: burnett01/rsync-deployments@8.0.0
+        with:
+          switches: -azr --delete --exclude='.env'
+          path: .next/standalone/
+          remote_path: /var/www/html/lista-mercado/
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Restart app on server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd /var/www/html/lista-mercado
+            set -a
+            source .env
+            set +a
+            export HOSTNAME=127.0.0.1
+            pm2 delete lista-mercado 2>/dev/null || true
+            pm2 start server.js --name lista-mercado
+            pm2 save

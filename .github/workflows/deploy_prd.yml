@@ -22,7 +22,7 @@ jobs:
             --exclude='.env'
             --exclude='.DS_Store'
           path: ./
-          remote_path: /var/www/html/lista-mercado/prd/source/
+          remote_path: /var/www/html/lista-mercado/repo/
           remote_host: ${{ secrets.HOST }}
           remote_user: ${{ secrets.USERNAME }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-            cd /var/www/html/lista-mercado/prd/source
+            cd /var/www/html/lista-mercado/repo
 
             set -a
             source .env
@@ -51,7 +51,7 @@ jobs:
               cp -r public .next/standalone/public
             fi
 
-            rsync -a --delete .next/standalone/ /var/www/html/lista-mercado/prd/
+            rsync -a --delete --exclude='.env' .next/standalone/ /var/www/html/lista-mercado/prd/
 
             cd /var/www/html/lista-mercado/prd
             set -a

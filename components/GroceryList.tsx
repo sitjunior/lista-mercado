@@ -20,6 +20,12 @@ export default function GroceryList() {
   const inputRef = useRef<HTMLInputElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)
 
+  function api(path: string, init?: RequestInit) {
+    const t = window.location.pathname.split('/').filter(Boolean)[0] || ''
+    const sep = path.includes('?') ? '&' : '?'
+    return fetch(`${path}${sep}token=${t}`, init)
+  }
+
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const hasClass = document.documentElement.classList.contains('dark')
@@ -38,7 +44,7 @@ export default function GroceryList() {
   }
 
   const fetchItems = useCallback(async () => {
-    const res = await fetch('/api/items')
+    const res = await api('/api/items')
     const data = await res.json()
     setItems(data)
   }, [])
@@ -49,7 +55,7 @@ export default function GroceryList() {
 
   async function addItem() {
     if (!newName.trim()) return
-    const res = await fetch('/api/items', {
+    const res = await api('/api/items', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: newName.trim() }),
@@ -62,7 +68,7 @@ export default function GroceryList() {
   }
 
   async function toggleAcquired(item: Item) {
-    await fetch(`/api/items/${item.id}`, {
+    await api(`/api/items/${item.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ acquired: !item.acquired }),
@@ -71,7 +77,7 @@ export default function GroceryList() {
   }
 
   async function deleteItem(id: number) {
-    await fetch(`/api/items/${id}`, { method: 'DELETE' })
+    await api(`/api/items/${id}`, { method: 'DELETE' })
     setSelectedIds((prev) => {
       const next = new Set(prev)
       next.delete(id)
@@ -82,7 +88,7 @@ export default function GroceryList() {
 
   async function deleteSelected() {
     for (const id of selectedIds) {
-      await fetch(`/api/items/${id}`, { method: 'DELETE' })
+      await api(`/api/items/${id}`, { method: 'DELETE' })
     }
     setSelectedIds(new Set())
     fetchItems()
@@ -90,7 +96,7 @@ export default function GroceryList() {
 
   async function updateName(id: number) {
     if (!editName.trim()) return
-    await fetch(`/api/items/${id}`, {
+    await api(`/api/items/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: editName.trim() }),

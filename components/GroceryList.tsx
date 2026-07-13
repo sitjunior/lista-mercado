@@ -20,7 +20,6 @@ export default function GroceryList() {
   const inputRef = useRef<HTMLInputElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)
   const lastClickRef = useRef<{ id: number; time: number } | null>(null)
-  const longPressRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   function api(path: string, init?: RequestInit) {
     const t = window.location.pathname.split('/').filter(Boolean)[0] || ''
@@ -126,17 +125,6 @@ export default function GroceryList() {
       lastClickRef.current = null
     } else {
       lastClickRef.current = { id: item.id, time: now }
-    }
-  }
-
-  function handleTouchStart(item: Item) {
-    longPressRef.current = setTimeout(() => startEditing(item), 500)
-  }
-
-  function handleTouchEnd() {
-    if (longPressRef.current) {
-      clearTimeout(longPressRef.current)
-      longPressRef.current = null
     }
   }
 
@@ -272,9 +260,6 @@ export default function GroceryList() {
               <button
                 type="button"
                 onClick={() => handleClick(item)}
-                onTouchStart={() => handleTouchStart(item)}
-                onTouchEnd={handleTouchEnd}
-                onTouchMove={handleTouchEnd}
                 className="flex-1 text-left text-base text-zinc-800 dark:text-zinc-100"
               >
                 {item.name}
@@ -350,9 +335,6 @@ export default function GroceryList() {
                   <button
                     type="button"
                     onClick={() => handleClick(item)}
-                    onTouchStart={() => handleTouchStart(item)}
-                    onTouchEnd={handleTouchEnd}
-                    onTouchMove={handleTouchEnd}
                     className="flex-1 text-left text-base text-zinc-400 line-through dark:text-zinc-500"
                   >
                     {item.name}

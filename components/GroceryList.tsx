@@ -366,6 +366,7 @@ export default function GroceryList() {
         type="date"
         value={formatDate(item.date)}
         onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
+        style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
         className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       />
       <select
@@ -502,6 +503,7 @@ export default function GroceryList() {
         type="date"
         value={formatDate(item.date)}
         onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
+        style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
         className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />
       <select

@@ -31,6 +31,13 @@ function parsePrice(raw: string): number | null {
 
 function formatDate(value: string | null): string {
   if (!value) return ''
+  const parts = value.slice(0, 10).split('-')
+  if (parts.length !== 3) return value.slice(0, 10)
+  return `${parts[2]}/${parts[1]}/${parts[0]}`
+}
+
+function dateInputValue(value: string | null): string {
+  if (!value) return ''
   return value.slice(0, 10)
 }
 
@@ -315,7 +322,7 @@ export default function GroceryList() {
       )}
     </div>
 
-    <div className="mt-1 grid grid-cols-2 gap-1 sm:grid-cols-4">
+    <div className="mt-1 grid grid-cols-12 gap-1">
       <input
         inputMode="decimal"
         value={priceInputs[item.id] ?? (item.price !== null ? formatPrice(item.price) : '')}
@@ -337,7 +344,7 @@ export default function GroceryList() {
           }
         }}
         placeholder="R$ 0,00"
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        className="col-span-3 w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       />
       <input
         type="number"
@@ -361,19 +368,29 @@ export default function GroceryList() {
           }
         }}
         placeholder="Qtd"
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        className="col-span-2 w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       />
-      <input
-        type="date"
-        value={formatDate(item.date)}
-        onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
-        style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
-      />
+      <div className="col-span-4 relative w-full min-w-0">
+        <input
+          type="text"
+          readOnly
+          value={formatDate(item.date)}
+          placeholder="Data"
+          className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        />
+        <input
+          type="date"
+          value={dateInputValue(item.date)}
+          onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
+          style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
+          className="absolute inset-0 opacity-0 cursor-pointer"
+        />
+      </div>
       <select
         value={item.location ?? ''}
         onChange={(e) => saveItemField(item.id, 'location', e.target.value || null)}
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
+        className="col-span-3 w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       >
         <option value="">Local</option>
         <option value="Gigante">Gigante</option>
@@ -452,7 +469,7 @@ export default function GroceryList() {
       )}
     </div>
 
-    <div className="mt-1 grid grid-cols-2 gap-1 sm:grid-cols-4">
+    <div className="mt-1 grid grid-cols-12 gap-1">
       <input
         inputMode="decimal"
         value={priceInputs[item.id] ?? (item.price !== null ? formatPrice(item.price) : '')}
@@ -474,7 +491,7 @@ export default function GroceryList() {
           }
         }}
         placeholder="R$ 0,00"
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        className="col-span-3 w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />
       <input
         type="number"
@@ -498,19 +515,29 @@ export default function GroceryList() {
           }
         }}
         placeholder="Qtd"
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        className="col-span-2 w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />
-      <input
-        type="date"
-        value={formatDate(item.date)}
-        onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
-        style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
-      />
+      <div className="col-span-4 relative w-full min-w-0">
+        <input
+          type="text"
+          readOnly
+          value={formatDate(item.date)}
+          placeholder="Data"
+          className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        />
+        <input
+          type="date"
+          value={dateInputValue(item.date)}
+          onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
+          style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
+          className="absolute inset-0 opacity-0 cursor-pointer"
+        />
+      </div>
       <select
         value={item.location ?? ''}
         onChange={(e) => saveItemField(item.id, 'location', e.target.value || null)}
-        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
+        className="col-span-3 w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       >
         <option value="">Local</option>
         <option value="Gigante">Gigante</option>

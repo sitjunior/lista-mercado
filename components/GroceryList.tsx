@@ -336,7 +336,7 @@ export default function GroceryList() {
           }
         }}
         placeholder="R$ 0,00"
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       />
       <input
         type="number"
@@ -360,19 +360,19 @@ export default function GroceryList() {
           }
         }}
         placeholder="Qtd"
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       />
       <input
         type="date"
         value={formatDate(item.date)}
         onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
         style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       />
       <select
         value={item.location ?? ''}
         onChange={(e) => saveItemField(item.id, 'location', e.target.value || null)}
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       >
         <option value="">Local</option>
         <option value="Gigante">Gigante</option>
@@ -473,7 +473,7 @@ export default function GroceryList() {
           }
         }}
         placeholder="R$ 0,00"
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />
       <input
         type="number"
@@ -497,19 +497,19 @@ export default function GroceryList() {
           }
         }}
         placeholder="Qtd"
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />
       <input
         type="date"
         value={formatDate(item.date)}
         onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
         style={dark ? { colorScheme: 'dark' } as React.CSSProperties : undefined}
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />
       <select
         value={item.location ?? ''}
         onChange={(e) => saveItemField(item.id, 'location', e.target.value || null)}
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        className="w-full min-w-0 rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs max-sm:text-base text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       >
         <option value="">Local</option>
         <option value="Gigante">Gigante</option>

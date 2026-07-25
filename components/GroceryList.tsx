@@ -36,6 +36,7 @@ export default function GroceryList() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [dark, setDark] = useState(false)
   const [priceInputs, setPriceInputs] = useState<Record<number, string>>({})
+  const [quantityInputs, setQuantityInputs] = useState<Record<number, string>>({})
   const inputRef = useRef<HTMLInputElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)
   const lastClickRef = useRef<{ id: number; time: number } | null>(null)
@@ -322,10 +323,23 @@ export default function GroceryList() {
       <input
         type="number"
         min="0"
-        value={item.quantity ?? ''}
+        value={quantityInputs[item.id] ?? item.quantity ?? ''}
         onChange={(e) => {
-          const v = e.target.value
-          saveItemField(item.id, 'quantity', v ? parseInt(v, 10) : null)
+          setQuantityInputs((prev) => ({
+            ...prev,
+            [item.id]: e.target.value,
+          }))
+        }}
+        onBlur={() => {
+          const raw = quantityInputs[item.id]
+          if (raw !== undefined) {
+            saveItemField(item.id, 'quantity', raw ? parseInt(raw, 10) : null)
+            setQuantityInputs((prev) => {
+              const next = { ...prev }
+              delete next[item.id]
+              return next
+            })
+          }
         }}
         placeholder="Qtd"
         className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
@@ -439,15 +453,28 @@ export default function GroceryList() {
           }
         }}
         placeholder="R$ 0,00"
-        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through focus:not-last:line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />
       <input
         type="number"
         min="0"
-        value={item.quantity ?? ''}
+        value={quantityInputs[item.id] ?? item.quantity ?? ''}
         onChange={(e) => {
-          const v = e.target.value
-          saveItemField(item.id, 'quantity', v ? parseInt(v, 10) : null)
+          setQuantityInputs((prev) => ({
+            ...prev,
+            [item.id]: e.target.value,
+          }))
+        }}
+        onBlur={() => {
+          const raw = quantityInputs[item.id]
+          if (raw !== undefined) {
+            saveItemField(item.id, 'quantity', raw ? parseInt(raw, 10) : null)
+            setQuantityInputs((prev) => {
+              const next = { ...prev }
+              delete next[item.id]
+              return next
+            })
+          }
         }}
         placeholder="Qtd"
         className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"

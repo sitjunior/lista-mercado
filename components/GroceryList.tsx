@@ -7,6 +7,24 @@ type Item = {
   name: string
   acquired: number
   created_at: string
+  price: number | null
+  quantity: number | null
+  date: string | null
+  location: string | null
+}
+
+function formatPrice(value: number | null): string {
+  if (value === null) return ''
+  return value.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+}
+
+function parsePrice(raw: string): number | null {
+  const digits = raw.replace(/\D/g, '')
+  if (!digits) return null
+  return parseInt(digits, 10) / 100
 }
 
 export default function GroceryList() {
@@ -17,6 +35,7 @@ export default function GroceryList() {
   const [editMode, setEditMode] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [dark, setDark] = useState(false)
+  const [priceInputs, setPriceInputs] = useState<Record<number, string>>({})
   const inputRef = useRef<HTMLInputElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)
   const lastClickRef = useRef<{ id: number; time: number } | null>(null)
@@ -53,6 +72,15 @@ export default function GroceryList() {
   useEffect(() => {
     fetchItems()
   }, [fetchItems])
+
+  async function saveItemField(id: number, field: string, value: any) {
+    await api(`/api/items/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [field]: value }),
+    })
+    fetchItems()
+  }
 
   async function addItem() {
     if (!newName.trim()) return
@@ -213,61 +241,118 @@ export default function GroceryList() {
       )}
 
       <ul className="mb-6 space-y-0.5">
-        {pending.map((item) => (
-          <li
-            key={item.id}
-            className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
-              selectedIds.has(item.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-            }`}
-          >
-            {editMode ? (
-              <button
-                onClick={() => toggleSelect(item.id)}
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
-                  selectedIds.has(item.id)
-                    ? 'border-blue-600 bg-blue-600 dark:border-blue-400 dark:bg-blue-400'
-                    : 'border-zinc-300 dark:border-zinc-600'
-                }`}
-              >
-                {selectedIds.has(item.id) && (
-                  <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={() => toggleAcquired(item)}
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-zinc-300 transition-colors hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-500"
-              >
-                <div className="h-2.5 w-2.5 rounded-full bg-transparent" />
-              </button>
-            )}
+{pending.map((item) => (
+  <li
+    key={item.id}
+    className={`group flex flex-col rounded-lg px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+      selectedIds.has(item.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+    }`}
+  >
+    <div className="flex items-center gap-3">
+      {editMode ? (
+        <button
+          onClick={() => toggleSelect(item.id)}
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
+            selectedIds.has(item.id)
+              ? 'border-blue-600 bg-blue-600 dark:border-blue-400 dark:bg-blue-400'
+              : 'border-zinc-300 dark:border-zinc-600'
+          }`}
+        >
+          {selectedIds.has(item.id) && (
+            <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </button>
+      ) : (
+        <button
+          onClick={() => toggleAcquired(item)}
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-zinc-300 transition-colors hover:border-zinc-400 dark:border-zinc-600 dark:hover:border-zinc-500"
+        >
+          <div className="h-2.5 w-2.5 rounded-full bg-transparent" />
+        </button>
+      )}
 
-            {editingId === item.id ? (
-              <input
-                ref={editInputRef}
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                onBlur={() => updateName(item.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') updateName(item.id)
-                  if (e.key === 'Escape') setEditingId(null)
-                }}
-                className="flex-1 bg-transparent text-base text-zinc-800 outline-hidden dark:text-zinc-100"
-              />
-            ) : (
-              <button
-                type="button"
-                onClick={() => handleClick(item)}
-                className="flex-1 text-left text-base text-zinc-800 dark:text-zinc-100"
-              >
-                {item.name}
-              </button>
-            )}
+      {editingId === item.id ? (
+        <input
+          ref={editInputRef}
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          onBlur={() => updateName(item.id)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') updateName(item.id)
+            if (e.key === 'Escape') setEditingId(null)
+          }}
+          className="flex-1 bg-transparent text-base text-zinc-800 outline-hidden dark:text-zinc-100"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => handleClick(item)}
+          className="flex-1 text-left text-base text-zinc-800 dark:text-zinc-100"
+        >
+          {item.name}
+        </button>
+      )}
+    </div>
 
-          </li>
-        ))}
+    <div className="mt-1 grid grid-cols-2 gap-1 sm:grid-cols-4">
+      <input
+        value={priceInputs[item.id] ?? formatPrice(item.price)}
+        onChange={(e) => {
+          setPriceInputs((prev) => ({
+            ...prev,
+            [item.id]: e.target.value,
+          }))
+        }}
+        onBlur={() => {
+          const raw = priceInputs[item.id]
+          if (raw !== undefined) {
+            saveItemField(item.id, 'price', parsePrice(raw))
+            setPriceInputs((prev) => {
+              const next = { ...prev }
+              delete next[item.id]
+              return next
+            })
+          }
+        }}
+        placeholder="R$ 0,00"
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+      />
+      <input
+        type="number"
+        min="0"
+        value={item.quantity ?? ''}
+        onChange={(e) => {
+          const v = e.target.value
+          saveItemField(item.id, 'quantity', v ? parseInt(v, 10) : null)
+        }}
+        placeholder="Qtd"
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+      />
+      <input
+        type="date"
+        value={item.date ?? ''}
+        onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+      />
+      <select
+        value={item.location ?? ''}
+        onChange={(e) => saveItemField(item.id, 'location', e.target.value || null)}
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
+      >
+        <option value="">Local</option>
+        <option value="Gigante">Gigante</option>
+        <option value="Rio Verde">Rio Verde</option>
+        <option value="Max">Max</option>
+        <option value="Condor">Condor</option>
+        <option value="Atacadão">Atacadão</option>
+        <option value="Circuito">Circuito</option>
+        <option value="Carrefour">Carrefour</option>
+      </select>
+    </div>
+  </li>
+))}
       </ul>
 
       {acquired.length > 0 && (
@@ -276,72 +361,120 @@ export default function GroceryList() {
             Adquiridos — {acquired.length}
           </div>
           <ul className="space-y-0.5">
-            {acquired.map((item) => (
-              <li
-                key={item.id}
-                className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
-                  selectedIds.has(item.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                }`}
-              >
-                {editMode ? (
-                  <button
-                    onClick={() => toggleSelect(item.id)}
-                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
-                      selectedIds.has(item.id)
-                        ? 'border-blue-600 bg-blue-600 dark:border-blue-400 dark:bg-blue-400'
-                        : 'border-zinc-300 dark:border-zinc-600'
-                    }`}
-                  >
-                    {selectedIds.has(item.id) && (
-                      <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => toggleAcquired(item)}
-                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-green-400 bg-green-400"
-                  >
-                    <svg
-                      className="h-3 w-3 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </button>
-                )}
+{acquired.map((item) => (
+  <li
+    key={item.id}
+    className={`group flex flex-col rounded-lg px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+      selectedIds.has(item.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+    }`}
+  >
+    <div className="flex items-center gap-3">
+      {editMode ? (
+        <button
+          onClick={() => toggleSelect(item.id)}
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
+            selectedIds.has(item.id)
+              ? 'border-blue-600 bg-blue-600 dark:border-blue-400 dark:bg-blue-400'
+              : 'border-zinc-300 dark:border-zinc-600'
+          }`}
+        >
+          {selectedIds.has(item.id) && (
+            <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </button>
+      ) : (
+        <button
+          onClick={() => toggleAcquired(item)}
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-green-400 bg-green-400"
+        >
+          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </button>
+      )}
 
-                {editingId === item.id ? (
-                  <input
-                    ref={editInputRef}
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    onBlur={() => updateName(item.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') updateName(item.id)
-                      if (e.key === 'Escape') setEditingId(null)
-                    }}
-                    className="flex-1 bg-transparent text-base text-zinc-400 line-through outline-hidden dark:text-zinc-500"
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => handleClick(item)}
-                    className="flex-1 text-left text-base text-zinc-400 line-through dark:text-zinc-500"
-                  >
-                    {item.name}
-                  </button>
-                )}
-              </li>
-            ))}
+      {editingId === item.id ? (
+        <input
+          ref={editInputRef}
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          onBlur={() => updateName(item.id)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') updateName(item.id)
+            if (e.key === 'Escape') setEditingId(null)
+          }}
+          className="flex-1 bg-transparent text-base text-zinc-400 line-through outline-hidden dark:text-zinc-500"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => handleClick(item)}
+          className="flex-1 text-left text-base text-zinc-400 line-through dark:text-zinc-500"
+        >
+          {item.name}
+        </button>
+      )}
+    </div>
+
+    <div className="mt-1 grid grid-cols-2 gap-1 sm:grid-cols-4">
+      <input
+        value={priceInputs[item.id] ?? formatPrice(item.price)}
+        onChange={(e) => {
+          setPriceInputs((prev) => ({
+            ...prev,
+            [item.id]: e.target.value,
+          }))
+        }}
+        onBlur={() => {
+          const raw = priceInputs[item.id]
+          if (raw !== undefined) {
+            saveItemField(item.id, 'price', parsePrice(raw))
+            setPriceInputs((prev) => {
+              const next = { ...prev }
+              delete next[item.id]
+              return next
+            })
+          }
+        }}
+        placeholder="R$ 0,00"
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through focus:not-last:line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+      />
+      <input
+        type="number"
+        min="0"
+        value={item.quantity ?? ''}
+        onChange={(e) => {
+          const v = e.target.value
+          saveItemField(item.id, 'quantity', v ? parseInt(v, 10) : null)
+        }}
+        placeholder="Qtd"
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+      />
+      <input
+        type="date"
+        value={item.date ?? ''}
+        onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+      />
+      <select
+        value={item.location ?? ''}
+        onChange={(e) => saveItemField(item.id, 'location', e.target.value || null)}
+        className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
+      >
+        <option value="">Local</option>
+        <option value="Gigante">Gigante</option>
+        <option value="Rio Verde">Rio Verde</option>
+        <option value="Max">Max</option>
+        <option value="Condor">Condor</option>
+        <option value="Atacadão">Atacadão</option>
+        <option value="Circuito">Circuito</option>
+        <option value="Carrefour">Carrefour</option>
+      </select>
+    </div>
+  </li>
+))}
           </ul>
         </>
       )}

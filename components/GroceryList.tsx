@@ -29,6 +29,11 @@ function parsePrice(raw: string): number | null {
   return parseInt(digits, 10) / 100
 }
 
+function formatDate(value: string | null): string {
+  if (!value) return ''
+  return value.slice(0, 10)
+}
+
 function maskPrice(raw: string): string {
   const digits = raw.replace(/\D/g, '')
   if (!digits) return ''
@@ -359,7 +364,7 @@ export default function GroceryList() {
       />
       <input
         type="date"
-        value={item.date ?? ''}
+        value={formatDate(item.date)}
         onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
         className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-700 outline-hidden focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:focus:border-blue-500"
       />
@@ -495,7 +500,7 @@ export default function GroceryList() {
       />
       <input
         type="date"
-        value={item.date ?? ''}
+        value={formatDate(item.date)}
         onChange={(e) => saveItemField(item.id, 'date', e.target.value || null)}
         className="w-full rounded border border-zinc-200 bg-white px-1.5 py-0.5 text-xs text-zinc-400 line-through dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-500"
       />

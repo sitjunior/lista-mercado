@@ -240,6 +240,7 @@ export default function GroceryList() {
           onChange={(e) => setNewName(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Novo item…"
+          suppressHydrationWarning
           className="flex-1 bg-transparent text-base text-zinc-800 placeholder-zinc-400 outline-hidden dark:text-zinc-100 dark:placeholder-zinc-500"
         />
         {newName.trim() && (

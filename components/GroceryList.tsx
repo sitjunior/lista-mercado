@@ -13,9 +13,11 @@ type Item = {
   location: string | null
 }
 
-function formatPrice(value: number | null): string {
-  if (value === null) return ''
-  return 'R$ ' + value.toLocaleString('pt-BR', {
+function formatPrice(value: number | string | null): string {
+  if (value === null || value === undefined || value === '') return ''
+  const num = typeof value === 'string' ? parseFloat(value) : value
+  if (isNaN(num)) return ''
+  return 'R$ ' + num.toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })

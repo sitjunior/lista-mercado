@@ -12,11 +12,18 @@ interface ItemRow extends mysql.RowDataPacket {
   location: string | null
 }
 
+function mapRow(row: ItemRow) {
+  return {
+    ...row,
+    price: row.price !== null ? Number(row.price) : null,
+  }
+}
+
 export async function GET() {
   const rows = await query<ItemRow[]>(
     'SELECT id, name, acquired, created_at, price, quantity, date, location FROM items ORDER BY acquired ASC, LOWER(name) ASC'
   )
-  return Response.json(rows)
+  return Response.json(rows.map(mapRow))
 }
 
 export async function POST(request: Request) {
@@ -38,5 +45,5 @@ export async function POST(request: Request) {
     'SELECT id, name, acquired, created_at, price, quantity, date, location FROM items WHERE id = ?',
     [result.insertId]
   )
-  return Response.json(rows[0], { status: 201 })
+  return Response.json(mapRow(rows[0]), { status: 201 })
 }

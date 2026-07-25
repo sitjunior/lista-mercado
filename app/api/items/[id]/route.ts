@@ -78,7 +78,10 @@ export async function PATCH(
     return Response.json({ error: 'not found' }, { status: 404 })
   }
 
-  return Response.json(rows[0])
+  return Response.json({
+    ...rows[0],
+    price: rows[0].price !== null ? Number(rows[0].price) : null,
+  })
 }
 
 export async function DELETE(

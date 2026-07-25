@@ -6,6 +6,10 @@ interface ItemRow extends mysql.RowDataPacket {
   name: string
   acquired: number
   created_at: string
+  price: number | null
+  quantity: number | null
+  date: string | null
+  location: string | null
 }
 
 export async function PATCH(
@@ -13,30 +17,60 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const { acquired, name } = (await _request.json()) as {
+  const body = (await _request.json()) as {
     acquired?: boolean
     name?: string
+    price?: number | null
+    quantity?: number | null
+    date?: string | null
+    location?: string | null
   }
 
-  if (name !== undefined) {
-    if (!name.trim()) {
+  const sets: string[] = []
+  const vals: any[] = []
+
+  if (body.name !== undefined) {
+    if (!body.name.trim()) {
       return Response.json({ error: 'name cannot be empty' }, { status: 400 })
     }
-    await getPool().execute('UPDATE items SET name = ? WHERE id = ?', [
-      name.trim(),
-      id,
-    ])
+    sets.push('name = ?')
+    vals.push(body.name.trim())
   }
 
-  if (acquired !== undefined) {
-    await getPool().execute('UPDATE items SET acquired = ? WHERE id = ?', [
-      acquired ? 1 : 0,
-      id,
-    ])
+  if (body.acquired !== undefined) {
+    sets.push('acquired = ?')
+    vals.push(body.acquired ? 1 : 0)
+  }
+
+  if (body.price !== undefined) {
+    sets.push('price = ?')
+    vals.push(body.price)
+  }
+
+  if (body.quantity !== undefined) {
+    sets.push('quantity = ?')
+    vals.push(body.quantity)
+  }
+
+  if (body.date !== undefined) {
+    sets.push('date = ?')
+    vals.push(body.date || null)
+  }
+
+  if (body.location !== undefined) {
+    sets.push('location = ?')
+    vals.push(body.location || null)
+  }
+
+  if (sets.length > 0) {
+    await getPool().execute(
+      `UPDATE items SET ${sets.join(', ')} WHERE id = ?`,
+      [...vals, id]
+    )
   }
 
   const [rows] = await getPool().execute<ItemRow[]>(
-    'SELECT id, name, acquired, created_at FROM items WHERE id = ?',
+    'SELECT id, name, acquired, created_at, price, quantity, date, location FROM items WHERE id = ?',
     [id]
   )
 

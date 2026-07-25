@@ -15,7 +15,7 @@ type Item = {
 
 function formatPrice(value: number | null): string {
   if (value === null) return ''
-  return value.toLocaleString('pt-BR', {
+  return 'R$ ' + value.toLocaleString('pt-BR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })
@@ -25,6 +25,16 @@ function parsePrice(raw: string): number | null {
   const digits = raw.replace(/\D/g, '')
   if (!digits) return null
   return parseInt(digits, 10) / 100
+}
+
+function maskPrice(raw: string): string {
+  const digits = raw.replace(/\D/g, '')
+  if (!digits) return ''
+  const num = parseInt(digits, 10) / 100
+  return 'R$ ' + num.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
 }
 
 export default function GroceryList() {
@@ -299,11 +309,12 @@ export default function GroceryList() {
 
     <div className="mt-1 grid grid-cols-2 gap-1 sm:grid-cols-4">
       <input
-        value={priceInputs[item.id] ?? formatPrice(item.price)}
+        inputMode="decimal"
+        value={priceInputs[item.id] ?? (item.price !== null ? formatPrice(item.price) : '')}
         onChange={(e) => {
           setPriceInputs((prev) => ({
             ...prev,
-            [item.id]: e.target.value,
+            [item.id]: maskPrice(e.target.value),
           }))
         }}
         onBlur={() => {
@@ -434,11 +445,12 @@ export default function GroceryList() {
 
     <div className="mt-1 grid grid-cols-2 gap-1 sm:grid-cols-4">
       <input
-        value={priceInputs[item.id] ?? formatPrice(item.price)}
+        inputMode="decimal"
+        value={priceInputs[item.id] ?? (item.price !== null ? formatPrice(item.price) : '')}
         onChange={(e) => {
           setPriceInputs((prev) => ({
             ...prev,
-            [item.id]: e.target.value,
+            [item.id]: maskPrice(e.target.value),
           }))
         }}
         onBlur={() => {

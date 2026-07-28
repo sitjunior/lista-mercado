@@ -27,3 +27,7 @@ body {
 input, select, textarea {
   touch-action: manipulation;
 }
+
+input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}

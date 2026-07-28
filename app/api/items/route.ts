@@ -19,10 +19,21 @@ function mapRow(row: ItemRow) {
   }
 }
 
-export async function GET() {
-  const rows = await query<ItemRow[]>(
-    'SELECT id, name, acquired, created_at, price, quantity, date, location FROM items ORDER BY acquired ASC, LOWER(name) ASC'
-  )
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const q = searchParams.get('q')
+
+  let sql = 'SELECT id, name, acquired, created_at, price, quantity, date, location FROM items'
+  const params: string[] = []
+
+  if (q && q.trim()) {
+    sql += ' WHERE name LIKE ?'
+    params.push(`%${q.trim()}%`)
+  }
+
+  sql += ' ORDER BY acquired ASC, LOWER(name) ASC'
+
+  const rows = await query<ItemRow[]>(sql, params)
   return Response.json(rows.map(mapRow))
 }
 

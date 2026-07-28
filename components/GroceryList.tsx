@@ -57,6 +57,7 @@ export default function GroceryList() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [editMode, setEditMode] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [dark, setDark] = useState(false)
   const [priceInputs, setPriceInputs] = useState<Record<number, string>>({})
@@ -88,15 +89,19 @@ export default function GroceryList() {
     })
   }
 
-  const fetchItems = useCallback(async () => {
-    const res = await api('/api/items')
+  const fetchItems = useCallback(async (q?: string) => {
+    const url = q ? `/api/items?q=${encodeURIComponent(q)}` : '/api/items'
+    const res = await api(url)
     const data = await res.json()
     setItems(data)
   }, [])
 
   useEffect(() => {
-    fetchItems()
-  }, [fetchItems])
+    const timer = setTimeout(() => {
+      fetchItems(searchQuery)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery, fetchItems])
 
   async function saveItemField(id: number, field: string, value: any) {
     await api(`/api/items/${id}`, {
@@ -237,6 +242,23 @@ export default function GroceryList() {
             {editMode ? 'Concluir' : 'Editar'}
           </button>
         </div>
+      </div>
+
+      <div className="relative mb-6">
+        <svg
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Buscar…"
+          suppressHydrationWarning
+          className="w-full rounded-lg border border-zinc-200 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-700 outline-hidden placeholder-zinc-400 focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:placeholder-zinc-500 dark:focus:border-blue-500"
+        />
       </div>
 
       <div className="mb-6 flex items-center gap-3 rounded-lg border border-dashed border-zinc-300 px-3 py-2.5 dark:border-zinc-700">
@@ -405,6 +427,12 @@ export default function GroceryList() {
   </li>
 ))}
       </ul>
+
+      {searchQuery && pending.length === 0 && acquired.length === 0 && (
+        <div className="py-8 text-center text-sm text-zinc-400 dark:text-zinc-500">
+          Nenhum item encontrado
+        </div>
+      )}
 
       {acquired.length > 0 && (
         <>

@@ -48,6 +48,15 @@ export async function POST(request: Request) {
   if (!name || typeof name !== 'string' || !name.trim()) {
     return Response.json({ error: 'name is required' }, { status: 400 })
   }
+
+  const [existing] = await getPool().execute<ItemRow[]>(
+    'SELECT id FROM items WHERE LOWER(name) = LOWER(?)',
+    [name.trim()]
+  )
+  if (existing.length > 0) {
+    return Response.json({ error: 'Item já cadastrado!' }, { status: 409 })
+  }
+
   const [result] = await getPool().execute<mysql.ResultSetHeader>(
     'INSERT INTO items (name, price, quantity, date, location) VALUES (?, ?, ?, ?, ?)',
     [name.trim(), price ?? null, quantity ?? null, date ?? null, location ?? null]

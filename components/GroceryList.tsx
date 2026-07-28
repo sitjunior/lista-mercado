@@ -58,6 +58,7 @@ export default function GroceryList() {
   const [editName, setEditName] = useState('')
   const [editMode, setEditMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [dark, setDark] = useState(false)
   const [priceInputs, setPriceInputs] = useState<Record<number, string>>({})
@@ -119,6 +120,11 @@ export default function GroceryList() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: newName.trim() }),
     })
+    if (res.status === 409) {
+      const data = await res.json()
+      setErrorMessage(data.error)
+      return
+    }
     if (res.ok) {
       setNewName('')
       fetchItems()
@@ -591,6 +597,24 @@ export default function GroceryList() {
           >
             Apagar {selectedIds.size} selecionado{selectedIds.size > 1 ? 's' : ''}
           </button>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:bg-zinc-900">
+            <p className="text-center text-base font-medium text-zinc-800 dark:text-zinc-100">
+              {errorMessage}
+            </p>
+            <div className="mt-5 flex justify-center">
+              <button
+                onClick={() => setErrorMessage(null)}
+                className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+              >
+                OK
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

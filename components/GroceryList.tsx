@@ -110,7 +110,7 @@ export default function GroceryList() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ [field]: value }),
     })
-    fetchItems()
+    fetchItems(searchQuery)
   }
 
   async function addItem() {
@@ -127,7 +127,7 @@ export default function GroceryList() {
     }
     if (res.ok) {
       setNewName('')
-      fetchItems()
+      fetchItems(searchQuery)
       inputRef.current?.focus()
     }
   }
@@ -138,7 +138,7 @@ export default function GroceryList() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ acquired: !item.acquired }),
     })
-    fetchItems()
+    fetchItems(searchQuery)
   }
 
   async function deleteItem(id: number) {
@@ -148,7 +148,7 @@ export default function GroceryList() {
       next.delete(id)
       return next
     })
-    fetchItems()
+    fetchItems(searchQuery)
   }
 
   async function deleteSelected() {
@@ -156,7 +156,7 @@ export default function GroceryList() {
       await api(`/api/items/${id}`, { method: 'DELETE' })
     }
     setSelectedIds(new Set())
-    fetchItems()
+    fetchItems(searchQuery)
   }
 
   async function updateName(id: number) {
@@ -167,7 +167,7 @@ export default function GroceryList() {
       body: JSON.stringify({ name: editName.trim() }),
     })
     setEditingId(null)
-    fetchItems()
+    fetchItems(searchQuery)
   }
 
   function startEditing(item: Item) {

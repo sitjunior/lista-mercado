@@ -290,37 +290,6 @@ export default function GroceryList() {
         )}
       </div>
 
-      <div className="mb-6 flex items-center gap-3 rounded-lg border border-dashed border-zinc-300 px-3 py-2.5 dark:border-zinc-700">
-        <div className="h-5 w-5 shrink-0 rounded-full border-2 border-dashed border-zinc-300 dark:border-zinc-600" />
-        <input
-          ref={inputRef}
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Novo item…"
-          suppressHydrationWarning
-          className="flex-1 bg-transparent text-base text-zinc-800 placeholder-zinc-400 outline-hidden dark:text-zinc-100 dark:placeholder-zinc-500"
-        />
-        {newName.trim() && (
-          <>
-            <button
-              onClick={() => setNewName('')}
-              className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <button
-              onClick={() => addItem()}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
-            >
-              Adicionar
-            </button>
-          </>
-        )}
-      </div>
-
       {pending.length > 0 && (
         <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
           Pendentes — {pending.length}

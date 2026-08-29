@@ -53,7 +53,7 @@ function maskPrice(raw: string): string {
 
 export default function GroceryList() {
   const [items, setItems] = useState<Item[]>([])
-  const [newName, setNewName] = useState('')
+
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [editMode, setEditMode] = useState(false)
@@ -114,8 +114,8 @@ export default function GroceryList() {
   }
 
   async function addItem(name?: string) {
-    const itemName = name || newName.trim()
-    if (!itemName) return
+    if (!name) return
+    const itemName = name.trim()
     const res = await api('/api/items', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -127,11 +127,7 @@ export default function GroceryList() {
       return
     }
     if (res.ok) {
-      if (name) {
-        setInputValue('')
-      } else {
-        setNewName('')
-      }
+      setInputValue('')
       fetchItems(inputValue)
       inputRef.current?.focus()
     }
@@ -211,10 +207,6 @@ export default function GroceryList() {
       if (prev) setSelectedIds(new Set())
       return !prev
     })
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') addItem()
   }
 
   const pending = items.filter((i) => !i.acquired)

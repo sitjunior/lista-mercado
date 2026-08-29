@@ -113,12 +113,13 @@ export default function GroceryList() {
     fetchItems(inputValue)
   }
 
-  async function addItem() {
-    if (!newName.trim()) return
+  async function addItem(name?: string) {
+    const itemName = name || newName.trim()
+    if (!itemName) return
     const res = await api('/api/items', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newName.trim() }),
+      body: JSON.stringify({ name: itemName }),
     })
     if (res.status === 409) {
       const data = await res.json()
@@ -126,7 +127,11 @@ export default function GroceryList() {
       return
     }
     if (res.ok) {
-      setNewName('')
+      if (name) {
+        setInputValue('')
+      } else {
+        setNewName('')
+      }
       fetchItems(inputValue)
       inputRef.current?.focus()
     }
@@ -277,10 +282,7 @@ export default function GroceryList() {
         )}
         {inputValue.trim() && (
           <button
-            onClick={() => {
-              addItem()
-              setInputValue('')
-            }}
+            onClick={() => addItem(inputValue.trim())}
             className="absolute right-12 top-1/2 -translate-y-1/2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
           >
             Adicionar
@@ -310,7 +312,7 @@ export default function GroceryList() {
               </svg>
             </button>
             <button
-              onClick={addItem}
+              onClick={() => addItem()}
               className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
             >
               Adicionar

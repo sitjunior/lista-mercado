@@ -1,0 +1,109 @@
+<h2>Abordagens para implementação</h2>
+<p class="subtitle">3 opções de como unificar os campos</p>
+
+<div class="cards">
+  <div class="card" data-choice="1" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Abordagem 1: Reutilizar searchQuery</div>
+        <div class="mockup-body">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+              <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar…" readonly>
+              <button style="padding: 4px 12px; background: #3b82f6; color: white; border-radius: 6px; font-size: 12px; font-weight: 500; border: none; cursor: pointer;">Adicionar</button>
+            </div>
+            <div style="font-size: 12px; color: #6b7280; padding: 0 4px;">
+              • Usa o mesmo estado `searchQuery`<br>
+              • Busca enquanto digita<br>
+              • "Adicionar" cadastra o texto como item
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Simples: reutilizar searchQuery</h3>
+      <p>Mínima mudança de código. Pode confundir se usuário vê resultados de busca mas quer adicionar.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="2" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Abordagem 2: Novo estado inputValue</div>
+        <div class="mockup-body">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+              <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar…" readonly>
+              <button style="padding: 4px 12px; background: #3b82f6; color: white; border-radius: 6px; font-size: 12px; font-weight: 500; border: none; cursor: pointer;">Adicionar</button>
+            </div>
+            <div style="font-size: 12px; color: #6b7280; padding: 0 4px;">
+              • Novo estado `inputValue` para o campo<br>
+              • `searchQuery` só é atualizado com debounce<br>
+              • Mais claro: separa busca de adição
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Claro: novo estado inputValue</h3>
+      <p>Mais código, mas mais flexível. Busca e adição ficam separados internamente.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="3" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Abordagem 3: Modo dual</div>
+        <div class="mockup-body">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+              <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar…" readonly>
+              <button style="padding: 4px 12px; background: #3b82f6; color: white; border-radius: 6px; font-size: 12px; font-weight: 500; border: none; cursor: pointer;">Adicionar</button>
+            </div>
+            <div style="font-size: 12px; color: #6b7280; padding: 0 4px;">
+              • Indicador visual (cor/ícone) do modo atual<br>
+              • Busca: ícone lupa azul | Adição: ícone + verde<br>
+              • Mais intuitivo, mas mais complexo
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Intuitivo: modo dual</h3>
+      <p>Indicador visual do modo. Mais trabalho, mas experiência mais clara.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>Recomendação</h3>
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>Abordagem 2 (Recomendada)</h4>
+      <ul>
+        <li>Equilíbrio entre simplicidade e clareza</li>
+        <li>Não confunde o usuário com resultados de busca</li>
+        <li>Código mais organizado</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>Abordagem 1 (Mais simples)</h4>
+      <ul>
+        <li>Pouca mudança de código</li>
+        <li>Pode confundir o usuário</li>
+      </ul>
+    </div>
+  </div>
+</div>

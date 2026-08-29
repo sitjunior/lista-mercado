@@ -1,0 +1,99 @@
+<h2>Design Final: Campo Unificado</h2>
+<p class="subtitle">Abordagem 2: Novo estado inputValue</p>
+
+<div class="mockup">
+  <div class="mockup-header">Componente GroceryList - Campo Unificado</div>
+  <div class="mockup-body">
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      
+      <!-- Estado 1: Campo vazio -->
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 8px;">Estado 1: Campo vazio (só busca)</div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+          <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar…" readonly>
+          <!-- Sem botão Adicionar -->
+        </div>
+      </div>
+
+      <!-- Estado 2: Campo com texto -->
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 8px;">Estado 2: Campo com texto (busca + adição)</div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+          <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input style="flex: 1; border: none; outline: none; font-size: 14px;" value="Arroz" readonly>
+          <button style="padding: 4px 12px; background: #3b82f6; color: white; border-radius: 6px; font-size: 12px; font-weight: 500; border: none; cursor: pointer;">Adicionar</button>
+        </div>
+        <div style="font-size: 11px; color: #6b7280; margin-top: 4px; padding: 0 4px;">
+          • Busca envia `searchQuery` com debounce 300ms<br>
+          • "Adicionar" cadastra "Arroz" como novo item
+        </div>
+      </div>
+
+      <!-- Estado 3: Botão X para limpar -->
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 8px;">Estado 3: Botão X para limpar</div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+          <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input style="flex: 1; border: none; outline: none; font-size: 14px;" value="Arroz" readonly>
+          <svg style="width: 16px; height: 16px; color: #9ca3af; cursor: pointer;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <button style="padding: 4px 12px; background: #3b82f6; color: white; border-radius: 6px; font-size: 12px; font-weight: 500; border: none; cursor: pointer;">Adicionar</button>
+        </div>
+        <div style="font-size: 11px; color: #6b7280; margin-top: 4px; padding: 0 4px;">
+          • X limpa o campo e remove resultados de busca<br>
+          • Adiciona `searchQuery` ao limpar
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>Fluxo de dados</h3>
+  <div class="mockup">
+    <div class="mockup-header">Estados e transições</div>
+    <div class="mockup-body">
+      <div style="font-family: monospace; font-size: 12px; line-height: 1.6;">
+        <div><strong>inputValue</strong> → estado do campo (o que o usuário digita)</div>
+        <div><strong>searchQuery</strong> → estado da busca (atualizado com debounce)</div>
+        <div style="margin-top: 8px;">
+          <div>1. Usuário digita → <code>inputValue</code> atualiza</div>
+          <div>2. Debounce 300ms → <code>searchQuery</code> = <code>inputValue</code></div>
+          <div>3. Clica "Adicionar" → <code>addItem(inputValue)</code></div>
+          <div>4. Após adicionar → <code>inputValue</code> = ''</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>Mudanças no código</h3>
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>Adições</h4>
+      <ul>
+        <li>Novo estado: <code>inputValue</code></li>
+        <li>Botão "Adicionar" condicional</li>
+        <li>Função <code>handleAdd()</code> separada</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>Remoções</h4>
+      <ul>
+        <li>Campo "Novo item" inteiro</li>
+        <li>Estado <code>newName</code></li>
+        <li>Borda tracejada</li>
+      </ul>
+    </div>
+  </div>
+</div>

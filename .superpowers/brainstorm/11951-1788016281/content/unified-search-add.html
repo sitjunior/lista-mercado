@@ -1,0 +1,89 @@
+<h2>Unificar campos de Buscar e Novo Item</h2>
+<p class="subtitle">Escolha como o campo unificado deve funcionar</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Opção A: Ícone +</div>
+        <div class="mockup-body">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+            <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar…" readonly>
+            <svg style="width: 16px; height: 16px; color: #3b82f6; cursor: pointer;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Ícone + à direita</h3>
+      <p>Clicar no + abre um modal ou expande para adicionar item</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Opção B: Botão Adicionar</div>
+        <div class="mockup-body">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+            <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar…" readonly>
+            <button style="padding: 4px 12px; background: #3b82f6; color: white; border-radius: 6px; font-size: 12px; font-weight: 500; border: none; cursor: pointer;">Adicionar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Botão "Adicionar" ao lado</h3>
+      <p>Botão sempre visível que abre formulário para novo item</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">Opção C: Campo duplo</div>
+        <div class="mockup-body">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+            <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar… ou digite para adicionar" readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Campo inteligente</h3>
+      <p>Busca enquanto digita; se não encontrar, oferece "Adicionar"</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>Como funciona atualmente</h3>
+  <div class="mockup">
+    <div class="mockup-header">Estado atual (dois campos separados)</div>
+    <div class="mockup-body">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;">
+          <svg style="width: 16px; height: 16px; color: #9ca3af;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Buscar…" readonly>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 2px dashed #d1d5db; border-radius: 8px; background: white;">
+          <div style="width: 20px; height: 20px; border: 2px dashed #d1d5db; border-radius: 50%;"></div>
+          <input style="flex: 1; border: none; outline: none; font-size: 14px;" placeholder="Novo item…" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

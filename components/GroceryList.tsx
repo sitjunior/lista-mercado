@@ -62,6 +62,7 @@ export default function GroceryList() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [dark, setDark] = useState(false)
   const [priceInputs, setPriceInputs] = useState<Record<number, string>>({})
+  const [inputValue, setInputValue] = useState('')
   const [quantityInputs, setQuantityInputs] = useState<Record<number, string>>({})
   const inputRef = useRef<HTMLInputElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)

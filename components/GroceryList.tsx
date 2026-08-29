@@ -275,6 +275,17 @@ export default function GroceryList() {
             </svg>
           </button>
         )}
+        {inputValue.trim() && (
+          <button
+            onClick={() => {
+              addItem()
+              setInputValue('')
+            }}
+            className="absolute right-12 top-1/2 -translate-y-1/2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+          >
+            Adicionar
+          </button>
+        )}
       </div>
 
       <div className="mb-6 flex items-center gap-3 rounded-lg border border-dashed border-zinc-300 px-3 py-2.5 dark:border-zinc-700">

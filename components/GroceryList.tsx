@@ -128,7 +128,6 @@ export default function GroceryList() {
     }
     if (res.ok) {
       setInputValue('')
-      fetchItems(inputValue)
       inputRef.current?.focus()
     }
   }
@@ -255,6 +254,7 @@ export default function GroceryList() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input
+          ref={inputRef}
           type="search"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

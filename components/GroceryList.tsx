@@ -57,7 +57,6 @@ export default function GroceryList() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [editMode, setEditMode] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [dark, setDark] = useState(false)
@@ -100,10 +99,10 @@ export default function GroceryList() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchItems(searchQuery)
+      fetchItems(inputValue)
     }, 300)
     return () => clearTimeout(timer)
-  }, [searchQuery, fetchItems])
+  }, [inputValue, fetchItems])
 
   async function saveItemField(id: number, field: string, value: any) {
     await api(`/api/items/${id}`, {
@@ -111,7 +110,7 @@ export default function GroceryList() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ [field]: value }),
     })
-    fetchItems(searchQuery)
+    fetchItems(inputValue)
   }
 
   async function addItem() {
@@ -128,7 +127,7 @@ export default function GroceryList() {
     }
     if (res.ok) {
       setNewName('')
-      fetchItems(searchQuery)
+      fetchItems(inputValue)
       inputRef.current?.focus()
     }
   }
@@ -139,7 +138,7 @@ export default function GroceryList() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ acquired: !item.acquired }),
     })
-    fetchItems(searchQuery)
+    fetchItems(inputValue)
   }
 
   async function deleteItem(id: number) {
@@ -149,7 +148,7 @@ export default function GroceryList() {
       next.delete(id)
       return next
     })
-    fetchItems(searchQuery)
+    fetchItems(inputValue)
   }
 
   async function deleteSelected() {
@@ -157,7 +156,7 @@ export default function GroceryList() {
       await api(`/api/items/${id}`, { method: 'DELETE' })
     }
     setSelectedIds(new Set())
-    fetchItems(searchQuery)
+    fetchItems(inputValue)
   }
 
   async function updateName(id: number) {
@@ -168,7 +167,7 @@ export default function GroceryList() {
       body: JSON.stringify({ name: editName.trim() }),
     })
     setEditingId(null)
-    fetchItems(searchQuery)
+    fetchItems(inputValue)
   }
 
   function startEditing(item: Item) {
@@ -455,7 +454,7 @@ export default function GroceryList() {
 ))}
       </ul>
 
-      {searchQuery && pending.length === 0 && acquired.length === 0 && (
+      {inputValue && pending.length === 0 && acquired.length === 0 && (
         <div className="py-8 text-center text-sm text-zinc-400 dark:text-zinc-500">
           Nenhum item encontrado
         </div>

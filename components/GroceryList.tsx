@@ -60,6 +60,7 @@ export default function GroceryList() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [dark, setDark] = useState(false)
+  const [fontScale, setFontScale] = useState(1)
   const [priceInputs, setPriceInputs] = useState<Record<number, string>>({})
   const [inputValue, setInputValue] = useState('')
   const [quantityInputs, setQuantityInputs] = useState<Record<number, string>>({})
@@ -76,16 +77,43 @@ export default function GroceryList() {
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const hasClass = document.documentElement.classList.contains('dark')
-    if (!hasClass && prefersDark) {
-      document.documentElement.classList.add('dark')
+
+    const storedTheme = document.cookie.split('; ').find(c => c.startsWith('theme='))
+    const storedFont = document.cookie.split('; ').find(c => c.startsWith('font-scale='))
+
+    const shouldDark = storedTheme
+      ? storedTheme.split('=')[1] === 'dark'
+      : hasClass || prefersDark
+
+    if (shouldDark !== hasClass) {
+      document.documentElement.classList.toggle('dark', shouldDark)
     }
-    setDark(hasClass || prefersDark)
+    setDark(shouldDark)
+
+    const scale = storedFont ? parseFloat(storedFont.split('=')[1]) : 1
+    document.documentElement.style.setProperty('--font-scale', String(scale))
+    setFontScale(scale)
   }, [])
 
   function toggleDark() {
     setDark((prev) => {
       const next = !prev
       document.documentElement.classList.toggle('dark', next)
+      document.cookie = `theme=${next ? 'dark' : 'light'}; path=/; max-age=31536000; SameSite=Lax`
+      return next
+    })
+  }
+
+  const FONT_SCALES = [0.85, 1.0, 1.15, 1.3]
+
+  function changeFont(delta: number) {
+    setFontScale((prev) => {
+      const idx = FONT_SCALES.indexOf(prev)
+      const nextIdx = idx + delta
+      if (nextIdx < 0 || nextIdx >= FONT_SCALES.length) return prev
+      const next = FONT_SCALES[nextIdx]
+      document.documentElement.style.setProperty('--font-scale', String(next))
+      document.cookie = `font-scale=${next}; path=/; max-age=31536000; SameSite=Lax`
       return next
     })
   }
@@ -218,6 +246,30 @@ export default function GroceryList() {
           Mercado
         </h1>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => changeFont(-1)}
+            disabled={fontScale <= 0.85}
+            className={`rounded-full p-2 text-sm font-bold transition-colors ${
+              fontScale <= 0.85
+                ? 'cursor-not-allowed text-zinc-300 dark:text-zinc-600'
+                : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200'
+            }`}
+            aria-label="Diminuir fonte"
+          >
+            A-
+          </button>
+          <button
+            onClick={() => changeFont(1)}
+            disabled={fontScale >= 1.3}
+            className={`rounded-full p-2 text-lg font-bold transition-colors ${
+              fontScale >= 1.3
+                ? 'cursor-not-allowed text-zinc-300 dark:text-zinc-600'
+                : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200'
+            }`}
+            aria-label="Aumentar fonte"
+          >
+            A+
+          </button>
           <button
             onClick={toggleDark}
             className="rounded-full p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"

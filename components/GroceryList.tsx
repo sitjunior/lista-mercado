@@ -88,6 +88,7 @@ export default function GroceryList() {
     if (shouldDark !== hasClass) {
       document.documentElement.classList.toggle('dark', shouldDark)
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialization from cookies (external system)
     setDark(shouldDark)
 
     const scale = storedFont ? parseFloat(storedFont.split('=')[1]) : 1
